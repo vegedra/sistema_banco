@@ -131,7 +131,6 @@ def criar_conta():
         
         print("Conta criada com sucesso!")
         entrar_conta()
-    criar_conta()
     
 def entrar_conta():
     print("    SISTEMA BANCARIO - Entrar na conta")

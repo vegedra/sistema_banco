@@ -2,17 +2,10 @@
 import curses
 import datetime
 import sys
+import pickle
+import os
 
 # TODO: APÓS TERMINAR SISTEMA FAZER INTERFACE COM CURSES
-
-# Valores do cliente são salvos aqui:
-DADOS = {
-    'novo_nome': None,
-    'novo_nascimento': None,
-    'novo_cpf': None,
-    'novo_rg': None,
-    'novo_senha': None
-    }
 
 def extrato():
     print("extrato")
@@ -35,19 +28,19 @@ def transferencia():
     pass
 
 def saldo():
-    print("saldo")
+    print("\nSaldo da conta: R$", DADOS['saldo'])
     pass
     
 def menu():
-    print("""    SISTEMA BANCARIO - Menu
-    Escolha as opções:
+    print("""SISTEMA BANCARIO - Menu
+Escolha as opções:
         
-        1) Ver saldo
-        2) Fazer depósito
-        3) Fazer saque
-        4) Extrato da conta
-        5) Encerrar conta
-        6) Sair""")
+    1) Ver saldo
+    2) Fazer depósito
+    3) Fazer saque
+    4) Extrato da conta
+    5) Encerrar conta
+    6) Sair""")
         
     while True:
         ch = input("> ")
@@ -69,7 +62,7 @@ def menu():
             print("\nTente novamente.")
     
 def criar_conta():
-    print("    SISTEMA BANCARIO - Criar conta")
+    print("SISTEMA BANCARIO - Criar conta")
     date = datetime.date.today()
     ano = date.strftime("%Y")   
     
@@ -129,32 +122,38 @@ def criar_conta():
             print("Senha muito curta.")
             continue
         
+        #Salva os dados:
+        with open('dados.p', 'wb') as f:
+            pickle.dump(DADOS, f)
         print("Conta criada com sucesso!")
         entrar_conta()
     
 def entrar_conta():
-    print("    SISTEMA BANCARIO - Entrar na conta")
+    print("SISTEMA BANCARIO - Entrar na conta\n")
     
     while True:
         cpf = input("CPF: ")
         senha = input("Senha: ")
         
         if cpf == DADOS['novo_cpf'] and senha == DADOS['novo_senha']:
-            print("Entrou na conta com sucesso!")
+            print("Entrou na conta com sucesso!\n")
             menu()
         else:
-            print("Credenciais erradas. Tente novamente.")
+            print("Credenciais erradas. Tente novamente.\n")
+            # getch() if 1 exit if enter continue
+            main()
 
 def main():
-    print("""    SISTEMA BANCARIO 
-    Escolha as opções:
+    print(DADOS)
+    print("""SISTEMA BANCARIO 
+Escolha as opções:
         
-        1) Criar conta
-        2) Entrar na conta
-        3) Sair""")
+    1) Criar conta
+    2) Entrar na conta
+    3) Sair""")
         
     while True:
-        ch = input("\n  > ")
+        ch = input("> ")
         
         if ch == '1':
             criar_conta()
@@ -167,4 +166,21 @@ def main():
             print("\nOpção inválida.")
         
 if __name__ == "__main__": 
+    if not os.path.exists('dados.p'):
+        # Valores do cliente são salvos aqui:
+        DADOS = {
+            'novo_nome': None,
+            'novo_nascimento': None,
+            'novo_cpf': None,
+            'novo_rg': None,
+            'novo_senha': None,
+            'saldo': 0.00,
+            'limite': 100.00
+            }
+            
+        with open('dados.p', 'wb') as f:
+            pickle.dump(DADOS, f)
+    else:
+        with open('dados.p', 'rb') as f:
+            DADOS = pickle.load(f)
     main()

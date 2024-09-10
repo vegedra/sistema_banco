@@ -2,7 +2,7 @@
 
 Um sistema de banco simples com interface feita em curses com as seguintes funcionalidades:
 
-- Criação de Conta: Permitir o cadastro de clientes com informações como nome, CPF, e-mail, e número da conta;
+- Criação de Conta: Permitir o cadastro de clientes com informações como nome, CPF, RG e etc.
 
 - Consulta de Saldo: Função para verificar o saldo disponível na conta;
 

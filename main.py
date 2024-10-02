@@ -6,22 +6,22 @@ import pickle
 import os
 
 # Menu de seleção com as teclas do teclado
-def menu_selection(screen, titulo, opcoes):
+def menu_selection(screen, text, options):
     curses.echo()
     curses.curs_set(0)
     selected_option = 0
 
     while True:
         screen.clear()
-        screen.addstr(titulo)
+        screen.addstr(text)
 
         # Percorre cada opção e a exibe, destacando a opção selecionada
-        for x, option in enumerate(opcoes):
+        for x, option in enumerate(options):
             if x == selected_option:
-                # Se esta for a opção selecionada, exibe-a com destaque (curses.A_REVERSE)
+                # Se esta for a opção selecionada a exibe com destaque (curses.A_REVERSE)
                 screen.addstr(x + 2, 0, f"> {option}", curses.A_REVERSE)
             else:
-                # Caso contrário, exibe a opção normalmente
+                # Se não, exibe a opção normalmente
                 screen.addstr(x + 2, 0, f"  {option}")
         screen.refresh()
 
@@ -30,7 +30,7 @@ def menu_selection(screen, titulo, opcoes):
         # Navegação do menu
         if key == curses.KEY_UP and selected_option > 0:
             selected_option -= 1
-        elif key == curses.KEY_DOWN and selected_option < len(opcoes) - 1:
+        elif key == curses.KEY_DOWN and selected_option < len(options) - 1:
             selected_option += 1
         elif key == ord('\n'):
             # Se a tecla pressionada for 'Enter', retorna o índice da opção selecionada
@@ -50,7 +50,7 @@ def encerrar_conta(screen):
     curses.echo()
     curses.curs_set(0)
     
-    # Menu
+    # Menu - espaço depois da opções para ficar mais bonitinho quando é selecionado
     options = ["Sim ", "Não "]
     escolha = menu_selection(screen, "Tem certeza que deseja deletar sua conta?", options)
 
@@ -139,7 +139,7 @@ def saldo(screen):
     screen.getch()
     menu_conta(screen)
 
-# Menu da conta do usuário autenticado
+# Menu da conta do usuário 
 def menu_conta(screen):
     screen.clear()
     curses.echo()
@@ -163,7 +163,7 @@ def menu_conta(screen):
         curses.endwin()
         sys.exit()
 
-# Função para entrar em uma conta existente
+# Função para entrar na conta salva em 'dados.p'
 def entrar_conta(screen):
     screen.clear()
     curses.echo()
@@ -174,11 +174,12 @@ def entrar_conta(screen):
         screen.addstr("SISTEMA BANCÁRIO - Entrar na Conta\n")
         screen.refresh()
         curses.curs_set(1)
+        
         screen.addstr("CPF: ")
         cpf = screen.getstr().decode('utf-8').strip()
         
         screen.addstr("Senha: ")
-        curses.noecho()
+        curses.noecho()  # Para ocultar o que o usuario digita
         senha = screen.getstr().decode('utf-8').strip()
         curses.echo()
 
@@ -189,7 +190,7 @@ def entrar_conta(screen):
             screen.addstr("\nCredenciais incorretas. Pressione qualquer tecla para tentar novamente.")
             screen.getch()
 
-# Criar uma conta nova
+# Criar uma conta nova e depois salvá-la
 def criar_conta(screen):
     screen.clear()
     curses.echo()
@@ -200,7 +201,9 @@ def criar_conta(screen):
         screen.addstr("SISTEMA BANCÁRIO - Criar Conta\n")
         curses.curs_set(1)
         screen.refresh()
-        # Entrada de nome
+        
+        # Entrada de nome - varios while true para caso o usuario cometa um erro ele não
+        # tenha que preencher os dados desde o inicio
         while True:
             screen.clear()
             screen.addstr("Insira seu nome completo: ")
@@ -260,7 +263,7 @@ def criar_conta(screen):
                 continue
             break
 
-        # Salva os dados no arquivo
+        # Salva os dados em um arquivo
         with open('dados.p', 'wb') as f:
             pickle.dump(DADOS, f)
         
@@ -309,7 +312,9 @@ if __name__ == "__main__":
         with open('dados.p', 'wb') as f:
             pickle.dump(DADOS, f)
     else:
+        # Carrega os dados salvos no arquivo 'dados.p'
         with open('dados.p', 'rb') as f:
             DADOS = pickle.load(f)
+    # Pega a data de hoje
     date = datetime.date.today()
     curses.wrapper(main) # Inicializa e finaliza o curses de forma mais eficiente
